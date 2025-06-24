@@ -1,6 +1,5 @@
 const tiles = document.querySelectorAll('.tile');
 
-// Convert tile NodeList to 2D array (4 rows of 4 tiles)
 function getGrid() {
   const grid = [];
   for (let i = 0; i < 4; i++) {
@@ -13,13 +12,11 @@ function getGrid() {
   return grid;
 }
 
-// Start game with two random tiles
 function startGame() {
   addRandomTile();
   addRandomTile();
 }
 
-// Add a "2" to a random empty tile
 function addRandomTile() {
   const emptyTiles = Array.from(tiles).filter(tile => tile.textContent === '');
   if (emptyTiles.length === 0) return;
@@ -27,44 +24,84 @@ function addRandomTile() {
   randomTile.textContent = '2';
 }
 
-// Listen for key presses
 document.addEventListener('keydown', handleKeyPress);
 
 function handleKeyPress(event) {
   if (event.key === "ArrowLeft") {
     moveLeft();
     addRandomTile();
+  } else if (event.key === "ArrowRight") {
+    moveRight();
+    addRandomTile();
+  } else if (event.key === "ArrowUp") {
+    moveUp();
+    addRandomTile();
+  } else if (event.key === "ArrowDown") {
+    moveDown();
+    addRandomTile();
   }
 }
 
-// Move all rows to the left
+// Merge logic shared by all directions
+function mergeAndPad(values) {
+  values = values.filter(val => val !== '');
+  for (let i = 0; i < values.length - 1; i++) {
+    if (values[i] === values[i + 1]) {
+      values[i] = String(Number(values[i]) * 2);
+      values[i + 1] = '';
+    }
+  }
+  values = values.filter(val => val !== '');
+  while (values.length < 4) {
+    values.push('');
+  }
+  return values;
+}
+
 function moveLeft() {
   const grid = getGrid();
-
   for (let row of grid) {
-    // Extract non-empty values
-    let values = row.map(tile => tile.textContent).filter(val => val !== '');
-
-    // Merge matching tiles
-    for (let i = 0; i < values.length - 1; i++) {
-      if (values[i] === values[i + 1]) {
-        values[i] = String(Number(values[i]) * 2);
-        values[i + 1] = '';
-      }
-    }
-
-    // Remove blanks again and pad row
-    values = values.filter(val => val !== '');
-    while (values.length < 4) {
-      values.push('');
-    }
-
-    // Set the updated values into the tiles
-    row.forEach((tile, i) => {
-      tile.textContent = values[i];
-    });
+    const values = row.map(tile => tile.textContent);
+    const newValues = mergeAndPad(values);
+    row.forEach((tile, i) => tile.textContent = newValues[i]);
   }
 }
 
-// 🔁 Start the game when the page loads
+function moveRight() {
+  const grid = getGrid();
+  for (let row of grid) {
+    const values = row.map(tile => tile.textContent).reverse();
+    const newValues = mergeAndPad(values).reverse();
+    row.forEach((tile, i) => tile.textContent = newValues[i]);
+  }
+}
+
+function moveUp() {
+  const grid = getGrid();
+  for (let col = 0; col < 4; col++) {
+    const values = [];
+    for (let row = 0; row < 4; row++) {
+      values.push(grid[row][col].textContent);
+    }
+    const newValues = mergeAndPad(values);
+    for (let row = 0; row < 4; row++) {
+      grid[row][col].textContent = newValues[row];
+    }
+  }
+}
+
+function moveDown() {
+  const grid = getGrid();
+  for (let col = 0; col < 4; col++) {
+    const values = [];
+    for (let row = 0; row < 4; row++) {
+      values.push(grid[row][col].textContent);
+    }
+    const newValues = mergeAndPad(values.reverse()).reverse();
+    for (let row = 0; row < 4; row++) {
+      grid[row][col].textContent = newValues[row];
+    }
+  }
+}
+
 startGame();
