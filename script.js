@@ -1,5 +1,18 @@
 const tiles = document.querySelectorAll('.tile');
 
+// Convert NodeList to 2D array (4x4 grid)
+function getGrid() {
+  const grid = [];
+  for (let i = 0; i < 4; i++) {
+    const row = [];
+    for (let j = 0; j < 4; j++) {
+      row.push(tiles[i * 4 + j]);
+    }
+    grid.push(row);
+  }
+  return grid;
+}
+
 function startGame() {
   addRandomTile();
   addRandomTile();
@@ -13,41 +26,30 @@ function addRandomTile() {
   randomTile.textContent = '2';
 }
 
-// Listen for arrow key presses
+// Handle arrow keys
 document.addEventListener('keydown', handleKeyPress);
 
 function handleKeyPress(event) {
-  switch (event.key) {
-    case "ArrowLeft":
-      moveLeft();
-      break;
-    // We'll add ArrowRight, ArrowUp, and ArrowDown later
+  if (event.key === "ArrowLeft") {
+    moveLeft();
+    addRandomTile();
   }
 }
 
-// Very basic move left logic
+// Move left logic
 function moveLeft() {
-  const values = [];
+  const grid = getGrid();
 
-  // Collect values from the tiles
-  tiles.forEach(tile => {
-    if (tile.textContent !== '') {
-      values.push(Number(tile.textContent));
+  for (let row of grid) {
+    let values = row.map(tile => tile.textContent).filter(val => val !== '');
+    while (values.length < 4) {
+      values.push('');
     }
-  });
 
-  // Add zeros to fill the rest
-  while (values.length < 16) {
-    values.push('');
+    row.forEach((tile, i) => {
+      tile.textContent = values[i];
+    });
   }
-
-  // Redistribute values to tiles
-  tiles.forEach((tile, i) => {
-    tile.textContent = values[i] || '';
-  });
-
-  // Add new tile
-  addRandomTile();
 }
 
 startGame();
