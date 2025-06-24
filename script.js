@@ -29,10 +29,30 @@ function updateTileImages() {
     '2048': 'https://i.imgur.com/4zN4lqU.png'
   };
 
+  function updateTileImages() {
+  const cupcakeImages = {
+    '2': 'https://i.imgur.com/1Jk9Wqj.png',
+    '4': 'https://i.imgur.com/jzNfQzr.png',
+    '8': 'https://i.imgur.com/VJ8CQnN.png',
+    '16': 'https://i.imgur.com/OB0y6MR.png',
+    '32': 'https://i.imgur.com/rHRpeia.png',
+    '64': 'https://i.imgur.com/cE5X4B2.png',
+    '128': 'https://i.imgur.com/MWcvkPs.png',
+    '256': 'https://i.imgur.com/NIDjL3Y.png',
+    '512': 'https://i.imgur.com/SgxXnxC.png',
+    '1024': 'https://i.imgur.com/EjlrVRG.png',
+    '2048': 'https://i.imgur.com/4zN4lqU.png'
+  };
+
   tiles.forEach(tile => {
-    const value = tile.textContent;
-    if (cupcakeImages[value]) {
-      tile.innerHTML = `<img src="${cupcakeImages[value]}" alt="${value}" style="width: 100%; height: 100%; border-radius: 5px;">`;
+    const rawValue = tile.textContent;
+    tile.innerHTML = ''; // 👈 THIS is what you were missing
+
+    if (cupcakeImages[rawValue]) {
+      tile.innerHTML = `<img src="${cupcakeImages[rawValue]}" alt="${rawValue}" style="width: 100%; height: 100%; border-radius: 5px;">`;
+    }
+  });
+}
     } else {
       tile.innerHTML = '';
     }
