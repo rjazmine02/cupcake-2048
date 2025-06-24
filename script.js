@@ -1,24 +1,24 @@
 const grid = document.querySelector('.grid');
 const tiles = Array.from(grid.children);
 
-// Set up a new game
 function startGame() {
-  tiles.forEach(tile => tile.textContent = '');
+  tiles.forEach(tile => {
+    tile.dataset.value = '';
+    tile.innerHTML = '';
+  });
   addNumber();
   addNumber();
   updateTileImages();
 }
 
-// Add a random "2" tile
 function addNumber() {
-  const emptyTiles = tiles.filter(tile => tile.textContent === '');
+  const emptyTiles = tiles.filter(tile => !tile.dataset.value);
   if (emptyTiles.length === 0) return;
 
   const randomTile = emptyTiles[Math.floor(Math.random() * emptyTiles.length)];
-  randomTile.textContent = '2';
+  randomTile.dataset.value = '2';
 }
 
-// Move tiles when arrow keys are pressed
 document.addEventListener('keydown', handleKeyPress);
 
 function handleKeyPress(e) {
@@ -27,19 +27,17 @@ function handleKeyPress(e) {
     case 'ArrowDown':
     case 'ArrowLeft':
     case 'ArrowRight':
-      move(e.key);
+      move();
       break;
   }
 }
 
-function move(direction) {
-  // Basic logic for combining tiles (simplified, can be expanded later)
-  // You can replace this with full 2048 logic later
+function move() {
+  // Simple logic for testing (does not merge yet)
   addNumber();
   updateTileImages();
 }
 
-// Update tile images based on their values
 function updateTileImages() {
   const cupcakeImages = {
     '2': 'https://cupcake2048.com/img/1.png',
@@ -52,23 +50,20 @@ function updateTileImages() {
     '256': 'https://cupcake2048.com/img/8.png',
     '512': 'https://cupcake2048.com/img/9.png',
     '1024': 'https://cupcake2048.com/img/10.png',
-    '2048': 'https://cupcake2048.com/img/11.png',
+    '2048': 'https://cupcake2048.com/img/11.png'
   };
 
   tiles.forEach(tile => {
-    tile.innerHTML = ''; // Clear tile content
+    const value = tile.dataset.value;
+    tile.innerHTML = '';
 
-    const value = tile.textContent;
-
-    if (cupcakeImages[value]) {
+    if (value && cupcakeImages[value]) {
       const img = document.createElement('img');
       img.src = cupcakeImages[value];
       img.alt = value;
       img.style.width = '100%';
       img.style.height = '100%';
       tile.appendChild(img);
-    } else if (value) {
-      tile.textContent = value;
     }
   });
 }
